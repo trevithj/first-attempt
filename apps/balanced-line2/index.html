@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS Line Sim</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<meta name="keywords" content="simulation, production line, Goldratt, The Goal"></meta>
+
+	<style>
+	.store {
+		background-color: white;
+		width: 3em;
+	}
+	.op {
+		background-color: #FF0;
+		color: #00F;
+		width: 2em;
+		padding-left: 0.1em;
+		padding-right:0.1em;
+	}
+	.background {
+		fill: #ccc;
+	}
+	</style>
+</head>
+<body ng-app="DiceGame">
+	<h4>Balanced-line simulation</h4>
+	<p>
+		Based loosely on the dice game described in Eli Goldratt's "The Goal", this version
+		can compare a "perfect" line (no variation in processes) with the more realistic
+		case of random breakdowns or delays in processes.
+	</p>
+	<p>
+		The yellow boxes represent operations,	with the count (in blue) being the number of <i>ticks</i> left to process a single item.
+		The white boxes represent the number of items to be processed.
+	</p>
+	<div id="main" ng-controller="GameCtrl">
+		<button id="btnRunS" ng-click="start(1000)">Run</button>
+		<button id="btnRunF" ng-click="start(200)">Run Fast</button>
+		<button id="btnStop" ng-click="stop()">Stop</button>
+		<span> Time: <span id="ticks">0</span> ticks</span>
+		<hr />
+		<h5>Balanced line, zero variation</h5>
+		<p>Each operation has a runtime of 4 'ticks'. Moving of items between operations
+		is assumed to be instantaneous.</p>
+		<div class="lineDiv"
+			data-failrate="[0,0,0,0,0,0]"
+			data-runtimes="[4,4,4,4,4,4]"
+			data-stores="[[50],[0],[0],[0],[0],[0]]">
+		</div>
+		<hr />
+		<h5>Balanced line, random variation</h5>
+		<p>Each operation has a runtime of two ticks, but only a 50% reliability. Since half the time the operation has 'broken down', then each operation time should average out at 4 ticks.</p>
+		<div class="lineDiv"
+			data-failrate="[0.5,0.5,0.5,0.5,0.5,0.5]"
+			data-runtimes="[2,2,2,2,2,2]"
+			data-stores="[[50],[0],[0],[0],[0],[0]]">
+		</div>
+		<hr />
+		<h5>Unbalanced line, random variation</h5>
+		<p>First operation takes two ticks with 50% reliability. The rest take 3 ticks with 75% reliability. Each operation time should average out at 4 ticks.</p>
+		<div class="lineDiv"
+			data-failrate="[0.5,0.25,0.25,0.25,0.25,0.25]"
+			data-runtimes="[2,3,3,3,3,3]"
+			data-stores="[[50],[0],[0],[0],[0],[0]]">
+		</div>
+		<hr />
+		<P>Prediction is that the unbalanced line will perform nearer the ideal than the balanced line, even though the average capacity of all operations is the same.</p>
+	</div>
+	<!-- <script src="main.js"></script> -->
+</body>
+</html>

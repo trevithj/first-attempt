@@ -27,4 +27,9 @@ Balanced production line simulator, with random breakdowns.
 * ~~Modularize, to allow several lines to run alongside each other, allowing direct comparison of scenarios.~~ done
 * Each directive shows its own ops/stores and results.
 * ~~Parameters: array of breakdown probabilities, one for each op. <jt-line-html failrate="[0.2,0.2,0.1,0.4,0.3]"></jt-line>~~ done
-* First draft up: http://webappcoder.net.nz/examples/simulators/balanced-line/
+* ~~First draft up: http://webappcoder.net.nz/examples/simulators/balanced-line/~~
+
+###Next project:###
+After a LONG delay I came back to this repository to put in some miscellaneous tools.
+* First, a dirt-simple Node server for serving static files/pages. No dependencies, just raw NodeJS.
+* 
