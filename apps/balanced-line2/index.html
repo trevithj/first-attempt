@@ -30,42 +30,37 @@
 		case of random breakdowns or delays in processes.
 	</p>
 	<p>
-		The yellow boxes represent operations,	with the count (in blue) being the number of <i>ticks</i> left to process a single item.
-		The white boxes represent the number of items to be processed.
+		The yellow boxes represent operations,	with the count (in blue) being the number of <i>units</i> that were processed in the current <i>tick</i>i>.
+		The white boxes represent the number of items available to be processed.
+		The actual capacity of an operation to process units may be higher than shown, but is limited by the number of available units.
 	</p>
-	<div id="main" ng-controller="GameCtrl">
-		<button id="btnRunS" ng-click="start(1000)">Run</button>
-		<button id="btnRunF" ng-click="start(200)">Run Fast</button>
-		<button id="btnStop" ng-click="stop()">Stop</button>
+	<div id="main">
+		<button id="btnStep">Step</button>
+		<button id="btnRunS">Run</button>
+		<button id="btnRunF">Run Fast</button>
+		<button id="btnStop">Stop</button>
 		<span> Time: <span id="ticks">0</span> ticks</span>
 		<hr />
 		<h5>Balanced line, zero variation</h5>
-		<p>Each operation has a runtime of 4 'ticks'. Moving of items between operations
+		<p>Each operation is able to process exactly 3 units each 'ticks'. Moving of items between operations
 		is assumed to be instantaneous.</p>
-		<div class="lineDiv"
-			data-failrate="[0,0,0,0,0,0]"
-			data-runtimes="[4,4,4,4,4,4]"
-			data-stores="[[50],[0],[0],[0],[0],[0]]">
-		</div>
+		<div class="lineDiv"></div>
 		<hr />
-		<h5>Balanced line, random variation</h5>
-		<p>Each operation has a runtime of two ticks, but only a 50% reliability. Since half the time the operation has 'broken down', then each operation time should average out at 4 ticks.</p>
-		<div class="lineDiv"
-			data-failrate="[0.5,0.5,0.5,0.5,0.5,0.5]"
-			data-runtimes="[2,2,2,2,2,2]"
-			data-stores="[[50],[0],[0],[0],[0],[0]]">
-		</div>
+		<h5>Balanced line, small random variation</h5>
+		<p>Each operation is able to process from 2 to 4 units per tick, with a mean of 3.</p>
+		<div class="lineDiv"></div>
+		<h5>Balanced line, large random variation</h5>
+		<p>Each operation is able to process from 0 to 7 units per tick, with a mean of 3.</p>
+		<div class="lineDiv"></div>
 		<hr />
-		<h5>Unbalanced line, random variation</h5>
+		<!-- <h5>Unbalanced line, random variation</h5>
 		<p>First operation takes two ticks with 50% reliability. The rest take 3 ticks with 75% reliability. Each operation time should average out at 4 ticks.</p>
-		<div class="lineDiv"
-			data-failrate="[0.5,0.25,0.25,0.25,0.25,0.25]"
-			data-runtimes="[2,3,3,3,3,3]"
-			data-stores="[[50],[0],[0],[0],[0],[0]]">
-		</div>
-		<hr />
-		<P>Prediction is that the unbalanced line will perform nearer the ideal than the balanced line, even though the average capacity of all operations is the same.</p>
+		<div class="lineDiv"></div>
+		<hr /> -->
+		<!-- <P>Prediction is that the unbalanced line will perform nearer the ideal than the balanced line, even though the average capacity of all operations is the same.</p> -->
+		<P>Prediction is that higher variation will result in less throughput per time, and more WIP, even though the average capacity of all operations is the same.</p>
+		<p>TODO: add an <i>unbalanced</i> line with variation, and see how it compares.</p>
 	</div>
-	<!-- <script src="main.js"></script> -->
+	<script src="main.js"></script>
 </body>
 </html>
