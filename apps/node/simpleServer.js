@@ -2,6 +2,7 @@ const http = require('http');
 const	url = require('url');
 const	path = require('path');
 const	fs = require('fs');
+const { writeError, handlePost } = require('./handlePost');
 
 const PORT = process.argv[2] || 8888;
 
@@ -11,13 +12,6 @@ const contentTypesByExtension = {
 	'.js': 'text/javascript'
 };
 
-const writeError = (response, status, lines) => {
-	response.writeHead(status, { 'Content-Type': 'text/plain' });
-	lines.forEach(line => {
-		response.write(line);
-	})
-	response.end();
-}
 
 const handleGet = (request, response) => {
 	const uri = url.parse(request.url).pathname;
@@ -52,9 +46,9 @@ const handleGet = (request, response) => {
 	});
 }
 
-const handlePost = (request, response) => {
-	return writeError(response, 404, ['POST handling not implemented yet.\n', request.url]);
-}
+//Connect and serve...
+// request: https://nodejs.org/api/http.html#http_class_http_incomingmessage
+// response: https://nodejs.org/api/http.html#http_class_http_serverresponse
 http
 	.createServer(function (request, response) {
 		const { method } = request;

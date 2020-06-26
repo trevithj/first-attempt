@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>JS Line Sim</title>
+	<title>JT Line Sim</title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 	<meta name="keywords" content="simulation, production line, Goldratt, The Goal"></meta>
 
@@ -16,6 +16,11 @@
 		width: 2em;
 		padding-left: 0.1em;
 		padding-right:0.1em;
+	}
+	.cash {
+		background-color: #0FF;
+		color: #F00;
+		margin-left: 1em;
 	}
 	.background {
 		fill: #ccc;
@@ -34,6 +39,12 @@
 		The white boxes represent the number of items available to be processed.
 		The actual capacity of an operation to process units may be higher than shown, but is limited by the number of available units.
 	</p>
+	<p>
+		The cyan boxes (to the right of each line) represent cash, which starts at zero.
+		Each unit costs $1, incurred when that unit first enters the line.
+		Each finished unit earns $2. The simulation runs for 300 ticks, after which we deduct the running costs of $800.
+		If the cash is below zero at the end of the run, the line can't pay its bills.
+	</p>
 	<div id="main">
 		<button id="btnStep">Step</button>
 		<button id="btnRunS">Run</button>
@@ -41,7 +52,7 @@
 		<button id="btnStop">Stop</button>
 		<span> Time: <span id="ticks">0</span> ticks</span>
 		<hr />
-		<h5>Balanced line, zero variation</h5>
+		<h5>Balanced line, zero variation ("perfect")</h5>
 		<p>Each operation is able to process exactly 3 units each 'ticks'. Moving of items between operations
 		is assumed to be instantaneous.</p>
 		<div class="lineDiv"></div>

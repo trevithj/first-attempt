@@ -1,14 +1,19 @@
 (function () {
+
 	const getEl = (sel) => document.querySelector(sel);
 	const getEls = (sel) => document.querySelectorAll(sel);
 	const random = max => Math.ceil(Math.random() * max);
 	let intervalId;
+	const INITIAL_CASH = 0;
+	const INITIAL_RM = 900;
+
 
 	const makeLine = id => {
-		const stores = [900,0,0,0,0,0];
+		const stores = [INITIAL_RM,3,3,3,3,0];
 		const tick = 0;
 		const ops = [0,0,0,0,0];
-		return { id, stores, tick, ops };
+		const cash = INITIAL_CASH;
+		return { id, stores, tick, ops, cash };
 	};
 	const lines = [makeLine(0), makeLine(1), makeLine(2)];
 
@@ -29,7 +34,9 @@
 			stores[i] -= d;
 			stores[i+1] += d;
 		});
-		return { id, tick: tick + 1, stores, ops };
+		let cash = thisState.cash - ops[0] + 2* ops[ops.length-1];
+		if(tick === 299) cash -= 800;
+		return { id, tick: tick + 1, stores, ops, cash };
 	}
 
 	const lineDivs = getEls('.lineDiv');
@@ -48,7 +55,7 @@
 			// const runtimes = JSON.parse(div.dataset.runtimes);
 			// const stores = JSON.parse(div.dataset.stores);
 			// console.log({ index, failrate, runtimes, stores });
-			const { stores, ops } = data[index];
+			const { stores, ops, cash } = data[index];
 			const html = [
 				'<div>',
 				...stores.map((s, i) => {
@@ -61,6 +68,7 @@
 						'</span>'
 					].join("");
 				}),
+				`<span class="cash">$${cash}</cash>`,
 				'</div>',
 			];
 			div.innerHTML = html.join('');
@@ -71,22 +79,28 @@
 		const thisLines = ticks[ticks.length-1];
 		const nextLines = thisLines.map(nextState);
 		ticks.push(nextLines);
-		console.log(nextLines[0].stores);
+		//console.log(nextLines[0].stores);
 	}
 
-	console.log(ticks[0].stores);
+	//console.log(ticks[0].stores);
 
-
+	const doStop = () => clearInterval(intervalId);
 	const doRun = () => {
 		doTick();
 		render(ticks[ticks.length-1]);
+		if(ticks.length > 300) {
+			doStop();
+		}
 	};
 	const doRuns = delay => {
-		clearInterval(intervalId);
+		doStop();
 		intervalId = setInterval(doRun, delay);
 	}
-	btnStep.addEventListener('click', () => doRun());
+	btnStep.addEventListener('click', () => { doStop(); doRun(); });
 	btnRunS.addEventListener('click', () => doRuns(500));
 	btnRunF.addEventListener('click', () => doRuns(100));
-	btnStop.addEventListener('click', () => clearInterval(intervalId));
+	btnStop.addEventListener('click', () => doStop());
+	document.addEventListener('beforeunload', () => doStop());
+
+	render(ticks[0]);
 })();

@@ -1,53 +1,75 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Post Canvas Data to Server</title>
-	</head>
-	<body>
-		<h1>POST Canvas Data to Image Server</h1>
-		<canvas width="80" height="80" id="canvas">canvas</canvas>
-		<script type="text/javascript">
-			window.onload = function() {
-				var canvas = document.getElementById("canvas");
-				var context = canvas.getContext("2d");
-				context.rect(0, 0, 80, 80);
-				context.fillStyle = 'yellow';
-				context.fill();
-			}
-		</script>
 
-		<div>
-			<input type="button" onclick="uploadEx()" value="Upload" />
-		</div>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>JT Post Canvas Data to Server</title>
+</head>
 
-		<form method="post" accept-charset="utf-8" name="form1">
-			<input name="hidden_data" id='hidden_data' type="hidden"/>
-		</form>
+<body>
+	<h1>POST Canvas Data to Image Server</h1>
+	<canvas width="80" height="80" id="canvas">canvas</canvas>
+	<script type="text/javascript">
+		window.onload = function () {
+			var canvas = document.getElementById("canvas");
+			var context = canvas.getContext("2d");
+			context.rect(0, 0, 80, 80);
+			context.fillStyle = 'yellow';
+			context.fill();
+		}
+	</script>
 
-		<script>
-			function uploadEx() {
-				var canvas = document.getElementById("canvas");
-				var dataURL = canvas.toDataURL("image/png");
-				document.getElementById('hidden_data').value = dataURL;
-				var fd = new FormData(document.forms["form1"]);
+	<div>
+		<input type="button" onclick="uploadEx()" value="Upload" />
+	</div>
 
-				var xhr = new XMLHttpRequest();
-				xhr.open('POST', 'upload_data', true);
+	<form method="post" accept-charset="utf-8" name="form1">
+		<input name="hidden_data" id='hidden_data' type="hidden" />
+	</form>
 
-				xhr.upload.onprogress = function(e) {
-					if (e.lengthComputable) {
-						var percentComplete = (e.loaded / e.total) * 100;
-						console.log(percentComplete + '% uploaded');
-						alert('Succesfully uploaded');
-					}
-				};
+	<script>
+		async function sendForm(url = '', form) {
+			const response = await fetch(url, {
+				method: 'POST', // PUT?
+				cache: 'no-cache',
+				mode: 'no-cors',
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				// referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+				body: form
+			});
+			console.log({response});
+			return response.json(); // parses JSON response into native JavaScript objects
+		}
 
-				xhr.onload = function() {
+		function uploadEx() {
+			const canvas = document.getElementById("canvas");
+			const dataURL = canvas.toDataURL("image/png");
+			document.getElementById('hidden_data').value = dataURL;
+			// const fd = new FormData(document.forms["form1"]);
+			const fd = new FormData();
+			fd.append('pic01.png', dataURL);
+			sendForm('http://localhost:8888/anything', fd)
+			// postData('./upload_data', fd)
+				.then(json => console.log({json}))
+				.catch(err => console.log({err}));
 
-				};
-				xhr.send(fd);
-			};
-		</script>
-	</body>
+			// const xhr = new XMLHttpRequest();
+			// xhr.open('POST', 'upload_data', true);
+
+			// xhr.upload.onprogress = function (e) {
+			// 	if (e.lengthComputable) {
+			// 		const percentComplete = (e.loaded / e.total) * 100;
+			// 		console.log(percentComplete + '% uploaded');
+			// 		alert('Succesfully uploaded');
+			// 	}
+			// };
+
+			// xhr.onload = function () {
+
+			// };
+			// xhr.send(fd);
+		};
+	</script>
+</body>
+
 </html>
