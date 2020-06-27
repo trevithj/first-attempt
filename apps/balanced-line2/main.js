@@ -9,30 +9,34 @@
 
 
 	const makeLine = id => {
-		const stores = [INITIAL_RM,3,3,3,3,0];
+		const rm = INITIAL_RM;
+		const stores = [3,3,3,3,3,0];
 		const tick = 0;
-		const ops = [0,0,0,0,0];
+		const ops = [0,0,0,0,0,0];
 		const cash = INITIAL_CASH;
-		return { id, stores, tick, ops, cash, msg:'Ready to run' };
+		return { id, rm, stores, tick, ops, cash, msg:'Ready to run' };
 	};
-	const lines = [makeLine(0), makeLine(1), makeLine(2)];
+	const lines = [0,1,2,3].map(makeLine);
 
+	const getSt = state => {
+		return [state.rm].concat(state.stores.slice(0, -1));
+	};
 
-	const opsFns = [
-		v => Math.min(3, v),
-		v => Math.min(random(3)+1, v),
-		v => Math.min(random(7)-1, v)
+	const nextOpsFns = [
+		state => getSt(state).map(v => Math.min(3, v)),
+		state => getSt(state).map(v => Math.min(random(3)+1, v)),
+		state => getSt(state).map(v => Math.min(random(5), v)),
+		state => getSt(state).map(v => Math.min(random(7)-1, v)),
 	]
 
 	const nextState = (thisState, n) => {
+		const nextOps = nextOpsFns[n];
 		const { id, tick } = thisState; //assume a line object
-		const st = thisState.stores;
-		const ops = st.map(opsFns[n]);
-		ops.pop(); //ignore last entry
-		const stores = [...st];
+		const ops = nextOps(thisState);
+		const st = [thisState.rm].concat(thisState.stores);
 		ops.forEach((d, i) => {
-			stores[i] -= d;
-			stores[i+1] += d;
+			st[i] -= d;
+			st[i+1] += d;
 		});
 
 		const revenue = 2* ops[ops.length-1];
@@ -44,7 +48,7 @@
 			`Fixed expenses:$${expenses}`,
 			`Cash on hand:$${cash}`
 		];
-		return { id, tick: tick + 1, stores, ops, cash, msg: msgs.join('\t') };
+		return { id, tick: tick + 1, rm:st[0], stores:st.slice(1), ops, cash, msg: msgs.join('\t') };
 	}
 
 	const lineDivs = getEls('.lineDiv');
@@ -63,14 +67,15 @@
 			// const runtimes = JSON.parse(div.dataset.runtimes);
 			// const stores = JSON.parse(div.dataset.stores);
 			// console.log({ index, failrate, runtimes, stores });
-			const { stores, ops, cash, msg } = data[index];
+			const { rm, stores, ops, cash, msg } = data[index];
 			const html = [
 				'<div>',
+				`<button class="raw-material">${rm}</button>`,
 				...stores.map((s, i) => {
-					return i===0 ? `<button class="raw-material">${stores[0]}</button>` : [
+					return [
 						'<span>',
 						'	<span>&#8680;</span>',
-						`	<span class="op">${ops[i-1]}</span>`,
+						`	<span class="op">${ops[i]}</span>`,
 						'	<span>&#8680;</span>',
 						`	<button class="store">${s}</button>`,
 						'</span>'
