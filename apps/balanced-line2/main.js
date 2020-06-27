@@ -13,7 +13,7 @@
 		const tick = 0;
 		const ops = [0,0,0,0,0];
 		const cash = INITIAL_CASH;
-		return { id, stores, tick, ops, cash };
+		return { id, stores, tick, ops, cash, msg:'Ready to run' };
 	};
 	const lines = [makeLine(0), makeLine(1), makeLine(2)];
 
@@ -34,9 +34,17 @@
 			stores[i] -= d;
 			stores[i+1] += d;
 		});
-		let cash = thisState.cash - ops[0] + 2* ops[ops.length-1];
-		if(tick === 299) cash -= 800;
-		return { id, tick: tick + 1, stores, ops, cash };
+
+		const revenue = 2* ops[ops.length-1];
+		const expenses = tick === 299 ? 800 : 0;
+		let cash = thisState.cash - ops[0] + revenue - expenses;
+		const msgs = [
+			`RM costs:$${ops[0]}`,
+			`Revenue:$${revenue}`,
+			`Fixed expenses:$${expenses}`,
+			`Cash on hand:$${cash}`
+		];
+		return { id, tick: tick + 1, stores, ops, cash, msg: msgs.join('\t') };
 	}
 
 	const lineDivs = getEls('.lineDiv');
@@ -55,11 +63,11 @@
 			// const runtimes = JSON.parse(div.dataset.runtimes);
 			// const stores = JSON.parse(div.dataset.stores);
 			// console.log({ index, failrate, runtimes, stores });
-			const { stores, ops, cash } = data[index];
+			const { stores, ops, cash, msg } = data[index];
 			const html = [
 				'<div>',
 				...stores.map((s, i) => {
-					return i===0 ? `<button class="store">${stores[0]}</button>` : [
+					return i===0 ? `<button class="raw-material">${stores[0]}</button>` : [
 						'<span>',
 						'	<span>&#8680;</span>',
 						`	<span class="op">${ops[i-1]}</span>`,
@@ -69,6 +77,7 @@
 					].join("");
 				}),
 				`<span class="cash">$${cash}</cash>`,
+				`<pre>${msg}</pre>`,
 				'</div>',
 			];
 			div.innerHTML = html.join('');
@@ -99,8 +108,8 @@
 	btnStep.addEventListener('click', () => { doStop(); doRun(); });
 	btnRunS.addEventListener('click', () => doRuns(500));
 	btnRunF.addEventListener('click', () => doRuns(100));
-	btnStop.addEventListener('click', () => doStop());
-	document.addEventListener('beforeunload', () => doStop());
+	btnStop.addEventListener('click', doStop);
+	document.addEventListener('beforeunload', doStop);
 
 	render(ticks[0]);
 })();

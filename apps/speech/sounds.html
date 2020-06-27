@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sounds</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; position: absolute }
+		#eyeL { top: 20px; left: 75px;}
+		#eyeR { top: 20px; right: 75px;}
+		#lips { top: 90px; left: 115px;}
+		.frame { background: #ddd; height: 95vh; padding-top: 5vh; }
+		#xtext { font-size: 60px; margin-left: 10vw; }
+		.col { 
+			display: table-cell; height: 80vh; width: 40vw;
+			border: solid thin blue; vertical-align: top;
+		}
+		.face { position: relative; height: 70vh; background: #eee; }
+		span { display: inline-block; width: 4em; text-align: right; background-color: white; }
+    </style>
+</head>
+<body>
+<div class="frame">
+	<div class="col">
+		<textarea id="control" style="height: 100%">
+		</textarea>
+	</div>
+
+	<div class="col">
+		<div class="face">
+			<canvas id="eyeL" width="75" height="50"></canvas>
+			<canvas id="eyeR" width="75" height="50"></canvas>
+			<canvas id="lips" width="75" height="50"></canvas>
+		</div>
+		<hr />
+		<button id="play" disabled>Play</button>
+		<button id="hold" disabled>Hold</button>
+		<span id="time"></span>
+		<span id="text"></span>
+	</div>
+	<div id="test">
+	</div>
+</div>
+<script src="drawEyes.js"></script>
+<script src="drawMouth.js"></script>
+<script src="defineAnimations.js"></script>
+<script>
+const getEl = id => document.getElementById(id);
+	// JavaScript code goes here
+const audioElement = new Audio('voiceSnippet.mp3');
+//const text = getEl("text");
+const canvas = getEl("lips");
+const ctx = canvas.getContext("2d");
+ctx.fillStyle = '#000';
+ctx.lineWidth = 2;
+ctx.lineJoin = "round";
+const HT = canvas.height;
+const WD = canvas.width;
+const drawMouth = getDrawMouth(ctx);
+
+testEyes(getEl("eyeL").getContext("2d"), getEl("eyeR").getContext("2d"));
+const PlaybackRate = 1.0;
+
+const playBtn = getEl("play");
+const holdBtn = getEl("hold");
+const timeSpn = getEl("time");
+const textSpn = getEl("text");
+let timerId = null;
+
+//audioElement.addEventListener('timeupdate', () => {
+//	console.log(audioElement.currentTime);
+//});
+let animate;
+
+audioElement.addEventListener('play', () => {
+	console.log('play');
+	holdBtn.disabled = false;
+	playBtn.disabled = true;
+});
+
+audioElement.addEventListener('playing', () => {
+	console.log('playing', audioElement.currentTime);
+	let last = Math.round(audioElement.currentTime * 1000);
+	timerId = setInterval(() => {
+		const tick = Math.round(audioElement.currentTime * 1000);
+		timeSpn.innerHTML = tick;
+		const a = animate(last, tick);
+//		console.log('tick-ms', tick, a.map(o => o.code));
+		a.forEach(obj => {
+			console.log(tick, obj.code);
+			textSpn.innerHTML = obj.code;
+			drawMouth(obj.code);
+		});
+		last = tick;
+	}, 10);
+});
+
+audioElement.addEventListener('ended', () => {
+	console.log('ended');
+	clearInterval(timerId);
+	holdBtn.disabled = true;
+	playBtn.disabled = false;
+});
+
+
+
+audioElement.addEventListener('loadeddata', () => {
+  playBtn.disabled = false;
+  playBtn.addEventListener("click", () => {
+	//const a = getEl("control").value;
+	//animate = getAnimations(a.split('\n'));
+	animate = getAnimations(getMouthAnimation());
+	audioElement.playbackRate = PlaybackRate;
+	audioElement.play();
+	holdBtn.disabled = false;
+	playBtn.disabled = true;
+  });
+
+  holdBtn.addEventListener("click", () => {
+	audioElement.pause();
+	clearInterval(timerId);
+	holdBtn.disabled = true;
+	playBtn.disabled = false;
+  });
+
+});
+
+const keyHandler = (e) => {
+	switch(e.key) {
+		case "1": return drawMouth("A", 1);
+		case "4": return drawMouth("A", 2);
+		case "7": return drawMouth("A", 3);
+
+		case "2": return drawMouth("I", 1);
+		case "5": return drawMouth("I", 2);
+		case "8": return drawMouth("I", 3);
+
+		case "3": return drawMouth("O", 1);
+		case "6": return drawMouth("O", 2);
+		case "9": return drawMouth("O", 3);
+
+		case " ": return drawMouth("M", 1);
+
+		default:
+			console.log(e.key, 'default');
+			return drawMouth(e.key);
+	}
+}
+
+
+//document.addEventListener("keyup", () => { drawMouth('M'); }, false);
+document.addEventListener("keydown", keyHandler, false);
+drawMouth('M');
+
+//https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript#45791300
+
+</script>
+
+</body>
+</html>

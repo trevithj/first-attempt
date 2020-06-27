@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Howitzer Simulator</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+		.frame { background: #ddd; height: 95vh; padding-top: 5vh; }
+    </style>
+</head>
+<body>
+<div class="frame">
+	<canvas id="view" width="1000" height="600"></canvas>
+</div>
+<script>
+	// JavaScript code goes here
+const canvas = document.getElementById("view");
+const ctx = canvas.getContext("2d");
+const HT = canvas.height;
+const WD = canvas.width;
+var intervalId;
+
+////////Calc simulation //////
+const calcV = (x, y) => Math.sqrt(x*x + y*y);
+const radians = deg => deg * Math.PI / 180;
+
+const makeShot = (deg) => {
+	const rad = radians(deg);
+	const dx = 10 * Math.sin(rad);
+	const dy = 10 * Math.cos(rad);
+	const v = calcV(dx, dy);
+	return { x: 0, y: 0, dx, dy, v };
+};
+let state = { tick: 0, shots: [makeShot(45)] };
+
+const shoot = deg => {
+	//console.log('Boom:', deg, state.shots.length);
+	return {
+		...state,
+		shots: [
+			...state.shots.filter(shot => shot.y > 0), 
+			makeShot(deg)
+		]
+	};
+}
+
+const update = oldState => {
+	const tick = oldState.tick;
+	const shots = oldState.shots.map(shot => {
+	const { x, y, dx, dy } = shot;
+		return {
+			x: x+dx,
+			y: y+dy,
+			dx: dx,// * 0.99, //mock air resistance (crudely)
+			dy: dy - 0.1,
+			v: calcV(dx, dy)
+		};
+	});
+	//console.log(tick);
+	return {...oldState, shots, tick: tick+1 };
+}
+
+///// Display /////
+const drawBall = (x, y) => {
+	const y1 = HT - y;
+	ctx.beginPath();
+	ctx.arc(x, y1, 3, 0, Math.PI*2, false);
+	ctx.fillStyle = "rgba(255,0,0, 1)"; //red";
+	ctx.fill();
+	ctx.closePath();
+};
+
+const draw = () => {
+	state = update(state);
+	//console.log(state);
+	ctx.clearRect(0, 0, WD, HT);
+	state.shots.forEach(shot => {
+		drawBall(shot.x, shot.y);
+	});
+	if(state.tick % 40 === 0) {
+//		clearInterval(intervalId);
+//		console.log('Done');
+		state = shoot(Math.random() * 45);
+	}
+}
+
+/**
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+var osc = audioCtx.createOscillator();
+osc.type = "sine";
+osc.connect(audioCtx.destination);
+osc.frequency.value = fps;
+osc.start();
+**/
+intervalId = setInterval(draw, 20);
+
+document.addEventListener('unload', () => {
+	clearInterval(intervalId);
+	console.log('All done');
+});
+//0212430674
+//https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript#45791300
+
+</script>
+
+</body>
+</html>

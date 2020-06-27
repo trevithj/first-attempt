@@ -32,4 +32,7 @@ Balanced production line simulator, with random breakdowns.
 ###Next project:###
 After a LONG delay I came back to this repository to put in some miscellaneous tools.
 * First, a dirt-simple Node server for serving static files/pages. No dependencies, just raw NodeJS.
-* 
+* Next, an update to the first project to use vanilla JS instead of leaning on Angular 1.3. Also some updates to the logic to clarify the idea of the simulator.
+* A howitzer simulator, throwing canvas balls around the screen. This again in vanilla JS, and for experimenting with a queue-based simulation approach.
+* A strobe page that plays with brain-wave entrainment. Again, experimenting with synching sounds and visuals together, and learning about the Web Audio APIs.
+* A speech app, to lipsync an animated mouth to a sound file. Very much a work in process, I intended this initially to be a digital-puppetry approach - but found that synching the drawn images to the sound-file was simpler than expected.

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Strobe Entrainment</title>
+    <style>
+    	body { padding: 0; margin: 0; background-color: black; }
+    	canvas { background: #eee; display: block; margin: 20px auto; }
+		div.frame { color: silver; background-color: black; width: 100%; height: 100vh; }
+		div.msg { text-align: center; width: 100%; font-size: 24px;}
+    </style>
+</head>
+<body>
+<div class="frame" id="frame">
+	<div class="msg">Use up/down arrows to change frames/second. Use space to stop/start the strobe.</div>
+	<div class="msg" id="FPS" />
+</div>
+<script>
+const makeOscillator = (hz) => {
+	var osc = audioCtx.createOscillator()
+	osc.type = "sine"
+	osc.connect(audioCtx.destination)
+	osc.frequency.value = hz;
+	osc.start();
+	return osc;
+}
+
+const frame = document.getElementById("frame");
+const FPS = document.getElementById("FPS");
+
+const colrs = ['rgba(255, 0, 127, 0.5)','rgba(0, 255, 0, 0.9)'];
+const baseHz = 440;
+let colrId = 0;
+
+let fps = 8.0;
+let intervalId = null;
+let running = false;
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+const baseTone = makeOscillator(baseHz);
+let oscillator = makeOscillator(baseHz - fps);
+audioCtx.suspend(); //silence oscillators to start with
+
+const update = () => {
+	colrId = (colrId + 1) % 2;
+	frame.style.backgroundColor = colrs[colrId];
+}
+
+const stop = () => {
+	clearInterval(intervalId);
+	intervalId = null;
+	audioCtx.suspend();
+}
+
+const start = () => {
+	oscillator.frequency.value = baseHz - fps;
+	intervalId = setInterval(update, 500 / fps);//twice as fast as fps
+	audioCtx.resume();
+}
+
+const changeTimer = () => {
+	const v = Number.parseFloat(fps).toFixed(2);
+	FPS.innerHTML = `${v} frames/sec`;
+	if (!running) return;
+	stop();
+	start();
+}
+
+
+
+const keyHandler = (e) => {
+	const delta = 0.25;
+	const incKeys = ["Up", "ArrowUp", "+"];
+	const decKeys = ["Down", "ArrowDown", "-"];
+	//console.log(e.key);
+    if (decKeys.indexOf(e.key) > -1) {
+		fps = fps > delta ? fps - delta : delta;
+		changeTimer();
+	} else if (incKeys.indexOf(e.key) > -1) {
+		//fps = fps > 1 ? fps-1 : 1;
+		fps += delta;
+		changeTimer();
+	} else if (e.key == " ") {
+		if(running) stop();
+		else start();
+		running = !running;
+	}
+}
+
+document.addEventListener("keydown", keyHandler, false);
+
+document.addEventListener('unload', () => {
+	clearInterval(intervalId);
+	oscillator.stop();
+});
+
+changeTimer();
+</script>
+
+</body>
+</html>

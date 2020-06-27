@@ -6,6 +6,10 @@
 	<meta name="keywords" content="simulation, production line, Goldratt, The Goal"></meta>
 
 	<style>
+	.raw-material {
+		background-color: silver;
+		width: 3em;
+	}
 	.store {
 		background-color: white;
 		width: 3em;
@@ -35,7 +39,8 @@
 		case of random breakdowns or delays in processes.
 	</p>
 	<p>
-		The yellow boxes represent operations,	with the count (in blue) being the number of <i>units</i> that were processed in the current <i>tick</i>i>.
+		The yellow boxes represent operations,	with the count (in blue) being the number of <i>units</i> that were processed in the current <i>tick</i>.
+		The grey box is the raw material ready to be consumed by the first operation.
 		The white boxes represent the number of items available to be processed.
 		The actual capacity of an operation to process units may be higher than shown, but is limited by the number of available units.
 	</p>
