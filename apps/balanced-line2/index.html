@@ -6,20 +6,27 @@
 	<meta name="keywords" content="simulation, production line, Goldratt, The Goal"></meta>
 
 	<style>
+	.box {
+		display: inline-block;
+		text-align: center;
+	}
 	.raw-material {
 		background-color: silver;
-		width: 3em;
+		width: 2.4em;
 	}
 	.store {
 		background-color: white;
-		width: 3em;
+		border: solid thin black;
+		width: 2.4em;
 	}
 	.op {
-		background-color: #FF0;
+		background-color: #EE0;
 		color: #00F;
-		width: 2em;
-		padding-left: 0.1em;
-		padding-right:0.1em;
+		width: 1.4em;
+		/* padding-left: 0.1em; */
+		/* padding-right:0.1em; */
+		border: solid thin white;
+		border-radius: 0.7em;
 	}
 	.cash {
 		background-color: #0FF;
@@ -46,9 +53,14 @@
 	</p>
 	<p>
 		The cyan boxes (to the right of each line) represent cash, which starts at zero.
+		The amount of cash at the end of the run is therefore the net profit for that time period.
 		Each unit costs $1, incurred when that unit first enters the line.
-		Each finished unit earns $2. The simulation runs for 300 ticks, after which we deduct the running costs of $800.
-		If the cash is below zero at the end of the run, the line can't pay its bills.
+		The line also incurrs fixed costs of $3 per tick.
+		Each finished unit earns $2. The simulation runs for 400 ticks.
+		If the cash (net profit) is below zero at the end of the run, the line can't pay its bills.
+	</p>
+	<p>
+		Moving of items between operations is assumed to be instantaneous.
 	</p>
 	<div id="main">
 		<button id="btnStep">Step</button>
@@ -56,12 +68,9 @@
 		<button id="btnRunF">Run Fast</button>
 		<button id="btnStop">Stop</button>
 		<span> Time: <span id="ticks">0</span> ticks</span>
-		<hr />
 		<h5>Balanced line, zero variation ("perfect")</h5>
-		<p>Each operation is able to process exactly 3 units each 'ticks'. Moving of items between operations
-		is assumed to be instantaneous.</p>
+		<p>Each operation is able to process exactly 3 units per tick.</p>
 		<div class="lineDiv"></div>
-		<hr />
 		<h5>Balanced line, small random variation</h5>
 		<p>Each operation is able to process from 2 to 4 units per tick, with a mean of 3.</p>
 		<div class="lineDiv"></div>
@@ -80,6 +89,12 @@
 		<P>Prediction is that higher variation will result in less throughput per time, and more WIP, even though the average capacity of all operations is the same.</p>
 		<p>TODO: add an <i>unbalanced</i> line with variation, and see how it compares.</p>
 	</div>
+	<script>
+		const BASE = {};
+		BASE.getEl = (sel) => document.querySelector(sel);
+		BASE.getEls = (sel) => document.querySelectorAll(sel);
+	</script>
+	<script src="render.js"></script>
 	<script src="main.js"></script>
 </body>
 </html>
