@@ -4,6 +4,7 @@
 	const { getEl, getEls } = BASE;
 
 	const lineDivs = getEls('.lineDiv');
+	const simPanel = getEl('.simPanel');
 	const tickSpan = getEl('#ticks');
 
 	const renderMoney = money => {
@@ -22,24 +23,30 @@
 		const { meanCap, meanAct, wip } = stats;
 		const toFixd = n => Number.parseFloat(n).toFixed(2);
 		const msgs = [
-			`mean capacities :${JSON.stringify(meanCap.map(toFixd))}\n`,
-			`mean utilization:${JSON.stringify(meanAct.map(toFixd))}\n`,
-			`Work in process:${wip}`,
+			'mean capacities:  ',
+			meanCap.map(toFixd).join(', '),
+			'\nmean utilization: ',
+			meanAct.map(toFixd).join(', '),
+			'\nefficiencies (%): ',
+			meanCap.map((cap, i) => {
+				const act = meanAct[i];
+				return act===cap ? "100%" : Number.parseFloat(act/cap*100).toFixed(1);
+			}).join('  '),
+			`\nWork in process: ${wip}`,
 		];
 		return msgs.join('');
 	};
 
 	BASE.render = (data) => {
 		tickSpan.innerHTML = data[0].tick;
-		lineDivs.forEach((div, index) => {
-			// const failrate = JSON.parse(div.dataset.failrate);
-			// const runtimes = JSON.parse(div.dataset.runtimes);
-			// const stores = JSON.parse(div.dataset.stores);
-			// console.log({ index, failrate, runtimes, stores });
-			const { rm, stores, ops, money } = data[index];
+		const html = [];
+		data.forEach((state) => {
+			const { rm, stores, ops, money, stats, title, desc } = state;
 			const { np, msg } = renderMoney(money);
-			const html = [
-				'<div>',
+			html.splice(html.length, 0,
+				'<div class="lineDiv">',
+				`<h5>${title}</h5>`,
+				`<p>${desc}</p>`,
 				`<div class="box raw-material">${rm}</div>`,
 				...stores.map((s, i) => {
 					return [
@@ -51,12 +58,12 @@
 						'</span>'
 					].join("");
 				}),
-				`<span class="cash">$${np}</cash>`,
-				`<pre>${msg}</pre>`,
-				'</div>',
-			];
-			div.innerHTML = html.join('');
+				`<span class="cash">$${np}</span>`,
+				`<pre class="stats">${msg}\n${renderStats(stats)}</pre>`,
+				'</div>'
+			);
 		});
+		simPanel.innerHTML = html.join('');
 	};
 
 })();

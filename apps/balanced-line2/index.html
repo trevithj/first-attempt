@@ -36,6 +36,14 @@
 	.background {
 		fill: #ccc;
 	}
+	.lineDiv {
+		border: solid thin silver;
+		padding: 0 1em;
+	}
+	.lineDiv > h5, .lineDiv > p {
+		margin: 0.4em 0;
+		text-align: center;
+	}
 	</style>
 </head>
 <body ng-app="DiceGame">
@@ -54,13 +62,14 @@
 	<p>
 		The cyan boxes (to the right of each line) represent cash, which starts at zero.
 		The amount of cash at the end of the run is therefore the net profit for that time period.
-		Each unit costs $1, incurred when that unit first enters the line.
+		Each unit costs $2, incurred when that unit first enters the line.
 		The line also incurrs fixed costs of $3 per tick.
-		Each finished unit earns $2. The simulation runs for 400 ticks.
+		Each finished unit earns $4. The simulation runs for 400 ticks.
 		If the cash (net profit) is below zero at the end of the run, the line can't pay its bills.
 	</p>
 	<p>
 		Moving of items between operations is assumed to be instantaneous.
+		Prediction is that higher variation will result in less throughput per time, and more WIP, even though the average capacity of all operations is the same.
 	</p>
 	<div id="main">
 		<button id="btnStep">Step</button>
@@ -68,25 +77,9 @@
 		<button id="btnRunF">Run Fast</button>
 		<button id="btnStop">Stop</button>
 		<span> Time: <span id="ticks">0</span> ticks</span>
-		<h5>Balanced line, zero variation ("perfect")</h5>
-		<p>Each operation is able to process exactly 3 units per tick.</p>
-		<div class="lineDiv"></div>
-		<h5>Balanced line, small random variation</h5>
-		<p>Each operation is able to process from 2 to 4 units per tick, with a mean of 3.</p>
-		<div class="lineDiv"></div>
-		<h5>Balanced line, medium random variation</h5>
-		<p>Each operation is able to process from 1 to 5 units per tick, with a mean of 3.</p>
-		<div class="lineDiv"></div>
-		<h5>Balanced line, large random variation</h5>
-		<p>Each operation is able to process from 0 to 7 units per tick, with a mean of 3.</p>
-		<div class="lineDiv"></div>
-		<hr />
-		<!-- <h5>Unbalanced line, random variation</h5>
-		<p>First operation takes two ticks with 50% reliability. The rest take 3 ticks with 75% reliability. Each operation time should average out at 4 ticks.</p>
-		<div class="lineDiv"></div>
-		<hr /> -->
-		<!-- <P>Prediction is that the unbalanced line will perform nearer the ideal than the balanced line, even though the average capacity of all operations is the same.</p> -->
-		<P>Prediction is that higher variation will result in less throughput per time, and more WIP, even though the average capacity of all operations is the same.</p>
+
+		<div class="simPanel"></div>
+
 		<p>TODO: add an <i>unbalanced</i> line with variation, and see how it compares.</p>
 	</div>
 	<script>

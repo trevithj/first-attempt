@@ -10,12 +10,12 @@
 	const STATS = {
 		meanCap: [0,0,0,0,0,0,0],
 		meanAct: [0,0,0,0,0,0,0],
-		wip: 0,
+		wip: 30,
 	};
 
 	BASE.makeLine = id => {
 		const rm = INITIAL_RM;
-		const stores = [3,3,3,3,3,3,0];
+		const stores = [5,5,5,5,5,5,0];
 		const tick = 0;
 		const ops = [0,0,0,0,0,0,0];
 		const money = {...MONEY};
@@ -33,6 +33,7 @@
 		state => getSt(state).map(v => [random(3)+1, v]),
 		state => getSt(state).map(v => [random(5), v]),
 		state => getSt(state).map(v => [random(7)-1, v]),
+		state => getSt(state).map((v,i) => i===0 ? [random(6)-1, v] : [random(7)-1, v]),
 	];
 
 	const nextMoney = (money, ops) => {
@@ -63,10 +64,10 @@
 
 	BASE.nextState = (thisState, n) => {
 		const nextOps = nextOpsFns[n];
-		const { id, tick } = thisState; //assume a line object
+		const { tick, rm, stores } = thisState; //assume a line object
 		const rawOps = nextOps(thisState);
 		const ops = rawOps.map(([cap, act]) => Math.min(cap, act));
-		const st = [thisState.rm].concat(thisState.stores);
+		const st = [rm].concat(stores);
 		ops.forEach((d, i) => {
 			st[i] -= d;
 			st[i+1] += d;
@@ -74,7 +75,7 @@
 
 		const money = nextMoney(thisState.money, ops);
 		const stats = nextStats(thisState, rawOps);
-		return { id, tick: tick + 1, rm:st[0], stores:st.slice(1), ops, money, stats };
+		return{ ...thisState, tick: tick + 1, rm:st[0], stores:st.slice(1), ops, money, stats };
 	};
 
 })();

@@ -3,7 +3,18 @@
 	const { getEl, render, makeLine, nextState } = BASE;
 	let intervalId;
 	const MAX_TICKS = 400;
-	const lines = [0,1,2,3].map(makeLine);
+	const lines = [0,1,2,3,4].map(makeLine);
+	lines[0].title = 'Balanced line, zero variation ("perfect")';
+	lines[1].title = 'Balanced line, small random variation';
+	lines[2].title = 'Balanced line, medium random variation';
+	lines[3].title = 'Balanced line, large random variation';
+	lines[4].title = 'Unbalanced line, large random variation';
+
+	lines[0].desc = 'Each operation is able to process exactly 3 units per tick.';
+	lines[1].desc = 'Each operation is able to process from 2 to 4 units per tick, with a mean of 3.';
+	lines[2].desc = 'Each operation is able to process from 1 to 5 units per tick, with a mean of 3.';
+	lines[3].desc = 'Each operation is able to process from 0 to 6 units per tick, with a mean of 3.';
+	lines[4].desc = 'As above, except first operation can process from 0 to 5 units per tick, with a mean of 2.5.';
 
 	const getSt = state => {
 		return [state.rm].concat(state.stores.slice(0, -1));
