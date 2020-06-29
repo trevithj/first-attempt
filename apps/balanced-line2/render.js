@@ -18,6 +18,17 @@
 		return { np, msg: msgs.join('\t') };
 	}
 
+	const renderStats = stats => {
+		const { meanCap, meanAct, wip } = stats;
+		const toFixd = n => Number.parseFloat(n).toFixed(2);
+		const msgs = [
+			`mean capacities :${JSON.stringify(meanCap.map(toFixd))}\n`,
+			`mean utilization:${JSON.stringify(meanAct.map(toFixd))}\n`,
+			`Work in process:${wip}`,
+		];
+		return msgs.join('');
+	};
+
 	BASE.render = (data) => {
 		tickSpan.innerHTML = data[0].tick;
 		lineDivs.forEach((div, index) => {
