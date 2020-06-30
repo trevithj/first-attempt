@@ -8,13 +8,13 @@
 	const tickSpan = getEl('#ticks');
 
 	const renderMoney = money => {
-		const { revenue, fixed, variable } = money;
+		const { revenue, fixed, variable, wip } = money;
 		const np = revenue - fixed - variable;
 		const msgs = [
 			`Revenue:$${revenue}`,
 			`Variable costs:$-${variable}`,
 			`Fixed costs:$-${fixed}`,
-			`Net Profit:$${np}`
+			`Net Profit:$${np}   Work-in-process:${wip}`,
 		];
 		return { np, msg: msgs.join('\t') };
 	}
@@ -32,7 +32,6 @@
 				const act = meanAct[i];
 				return act===cap ? "100%" : Number.parseFloat(act/cap*100).toFixed(1);
 			}).join('  '),
-			`\nWork in process: ${wip}`,
 		];
 		return msgs.join('');
 	};
@@ -40,12 +39,12 @@
 	BASE.render = (data) => {
 		tickSpan.innerHTML = data[0].tick;
 		const html = [];
-		data.forEach((state) => {
+		data.forEach((state, i) => {
 			const { rm, stores, ops, money, stats, title, desc } = state;
 			const { np, msg } = renderMoney(money);
 			html.splice(html.length, 0,
 				'<div class="lineDiv">',
-				`<h5>${title}</h5>`,
+				`<h5>Line ${i+1} - ${title}</h5>`,
 				`<p>${desc}</p>`,
 				`<div class="box raw-material">${rm}</div>`,
 				...stores.map((s, i) => {

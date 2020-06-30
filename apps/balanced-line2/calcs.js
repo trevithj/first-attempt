@@ -5,12 +5,12 @@
 	const MONEY = {
 		variable: 0,
 		fixed: 0,
-		revenue: 0
+		revenue: 0,
+		wip: 30,
 	};
 	const STATS = {
 		meanCap: [0,0,0,0,0,0,0],
 		meanAct: [0,0,0,0,0,0,0],
-		wip: 30,
 	};
 
 	BASE.makeLine = id => {
@@ -36,16 +36,19 @@
 		state => getSt(state).map((v,i) => i===0 ? [random(6)-1, v] : [random(7)-1, v]),
 	];
 
-	const nextMoney = (money, ops) => {
+	const nextMoney = (state, ops) => {
+		const { money, stores } = state;
 		const newMoney = {...money };
 		newMoney.fixed += 2; //$2 per tick
 		newMoney.variable += (3 * ops[0]); // $3 per unit
 		newMoney.revenue += (4 * ops[ops.length-1]); //$4 per unit
+		const fg = stores[stores.length-1];
+		newMoney.wip = -fg + stores.reduce((acc, cur) => acc + cur);
 		return newMoney;
 	}
 
 	const nextStats = (state, rawOps) => {
-		const { stats, tick, stores } = state;
+		const { stats, tick } = state;
 		const caps = rawOps.map(va => va[0]);
 		const acts = rawOps.map(va => Math.min(va[0], va[1]));
 		const meanCap = stats.meanCap.map((last, i) => {
@@ -55,10 +58,7 @@
 			return ((last * tick) + acts[i]) / (tick + 1);
 		});
 
-		const fg = stores[stores.length-1];
-		const wip = -fg + stores.reduce((acc, cur) => acc + cur);
-
-		const newStats = { ...stats, meanCap, meanAct, wip};
+		const newStats = { ...stats, meanCap, meanAct };
 		return newStats;
 	}
 
@@ -73,7 +73,7 @@
 			st[i+1] += d;
 		});
 
-		const money = nextMoney(thisState.money, ops);
+		const money = nextMoney(thisState, ops);
 		const stats = nextStats(thisState, rawOps);
 		return{ ...thisState, tick: tick + 1, rm:st[0], stores:st.slice(1), ops, money, stats };
 	};

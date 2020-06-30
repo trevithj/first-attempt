@@ -46,12 +46,13 @@
 	}
 	</style>
 </head>
-<body ng-app="DiceGame">
+<body>
 	<h4>Balanced-line simulation</h4>
 	<p>
 		Based loosely on the dice game described in Eli Goldratt's "The Goal", this version
 		can compare a "perfect" line (no variation in processes) with the more realistic
-		case of random breakdowns or delays in processes.
+		case of random variation in units processed. The simulation runs for 400 time units (ticks)
+		and compares performance of various simulated production lines.
 	</p>
 	<p>
 		The yellow boxes represent operations,	with the count (in blue) being the number of <i>units</i> that were processed in the current <i>tick</i>.
@@ -64,7 +65,7 @@
 		The amount of cash at the end of the run is therefore the net profit for that time period.
 		Each unit costs $2, incurred when that unit first enters the line.
 		The line also incurrs fixed costs of $3 per tick.
-		Each finished unit earns $4. The simulation runs for 400 ticks.
+		Each finished unit earns $4.
 		If the cash (net profit) is below zero at the end of the run, the line can't pay its bills.
 	</p>
 	<p>
@@ -80,7 +81,12 @@
 
 		<div class="simPanel"></div>
 
-		<p>TODO: add an <i>unbalanced</i> line with variation, and see how it compares.</p>
+		<p>
+			The unbalanced line 5 usually has the least capacity of all the lines, due to the first process being more limited.
+			But this has the side-effect of limiting the build-up of work-in-process, and so keeps the variable cost of material from rising too high.
+			As a result, it tends to have a higher net profit than the previous line 4.
+			This despite line 4 having the same variation but greater overall throughput.
+		</p>
 	</div>
 	<script>
 		const BASE = {};
