@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		body {
+			font-size: 20pt;
+		}
+		div.frame {
+			position: relative;
+			width: 100%;
+			height: 100px;
+			border: solid thin black;
+		}
+
+		div.box {
+			position: absolute;
+			border: solid thin silver;
+			width: 100px;
+			height: 100px;
+		}
+
+		div.rm {
+			left: 0px;
+		}
+
+		div.fg {
+			right: 0px;
+		}
+
+		div.op {
+			left: 100px;
+			/* color: white; */
+			/* background-color: red; */
+			animation-name: example;
+			animation-duration: 2s;
+			animation-iteration-count: 8;
+		}
+
+		@keyframes example {
+			0% {
+				left: 100px
+			}
+			100% {
+				left: calc(100% - 200px)
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<p><b>Note:</b> This example does not work in Internet Explorer 9 and earlier versions.</p>
+	<div class="frame">
+		<div class="rm box"></div>
+		<div class="op box"></div>
+		<div class="fg box"></div>
+	</div>
+</body>
+<script>
+	const rm = document.querySelector('.rm');
+	const op = document.querySelector('div.op');
+	const fg = document.querySelector('.fg');
+	const data = {
+		rm: 10, wip: 1, fg: 0
+	}
+	const render = () => {
+		rm.innerHTML = data.rm;
+		op.innerHTML = data.wip;
+		fg.innerHTML = data.fg;
+	};
+	// op.addEventListener('transitionstart', () => {
+	// 	rm.textContent = '0';
+	// });
+	// op.addEventListener('transitionend', () => {
+	// 	fg.innerHTML = '1';
+	// });
+	op.addEventListener('animationstart', () => {
+		data.rm -= data.wip;
+		render();
+	});
+	op.addEventListener('animationiteration', () => {
+		data.rm -= data.wip;
+		data.fg += data.wip;
+		render();
+	});
+	op.addEventListener('animationend', () => {
+		data.fg += data.wip;
+		render();
+	});
+	render();
+</script>
+
+</html>

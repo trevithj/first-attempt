@@ -1,0 +1,16 @@
+{
+  "name": "node-stomp-broker-ws",
+  "version": "1.0.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "bayun2",
+  "dependencies": {
+    "node-uuid": "^1.4.1",
+    "ws": "^0.4.31",
+    "stompjs": "^2.3.3"
+  },
+  "license": "ISC"
+}
