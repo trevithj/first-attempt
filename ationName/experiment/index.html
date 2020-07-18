@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Experimentation Site</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<div class="jumbotron">
+				<h4>The Links</h4>
+				<ul>
+
+					<li class="jt-links" data-def="Tools|tools/">
+						<jt-link>Compare small samples using a visual display|abTest/index</jt-link>
+						<jt-link>Compare small samples using box plots|boxPlots/index</jt-link>
+						<jt-link>Convert delimited table into an array of JSON objects|convertTxt2Json</jt-link>
+						<jt-link>Convert delimited table into a set of triples|convertTxt2Triples</jt-link>
+						<jt-link>A Sudoku-puzzle helper|sudoku/index</jt-link>
+					</li>
+
+					<li class="jt-links" data-def="Misc|tools/">
+						<jt-link>Trial calculation of a fractal fern|fern01</jt-link>
+						<jt-link>A Carpark-capacity simulator (needs instructions)|spSim/index</jt-link>
+					</li>
+					
+					<li class="jt-links" data-def="Simulations|sims/">
+						<jt-link>A Bus-in-carpark simulator, using hand-rolled state/dispatch pattern|busSim/index</jt-link>
+						<jt-link>Production line simulator that compares different configs of similar lines|balancedLine/index</jt-link>
+					</li>
+
+					<li class="jt-links" data-def="Blogs|blog/">
+						<jt-link>Trials with a static-page blog|index</jt-link>
+					</li>
+
+				</ul>
+
+				<p>
+					For readers who are tech-savvy, these links are created by a simple, client-based custom markup.
+					This was inspired by the Angular1.x directives I have used in the past,
+					but is surprisingly easy to implement in basic form without relying on any 3rd party libraries.
+				</p>
+			</div>
+		</div>
+	</body>
+	<script>
+		//Ye olde ES5 script
+		function forEach(collection, processFn) {
+			var i;
+			for( i=0; i<collection.length; i+=1) {
+				processFn(collection.item(i), i, collection);
+			}
+		}
+		function getDataDefAttr(el) {
+			var def = el.getAttribute("data-def") || "Title|url";
+			el.removeAttribute("data-def");
+			return def.split("|");
+		}
+		function processSPLinks(el) {
+			var def = getDataDefAttr(el);//[Label, common-path]
+			var links = el.getElementsByTagName("jt-link");
+			var html=['<span class="label label-default">',def[0],' </span><ul>'];
+			forEach(links, function(link) {
+				 var linkDef = link.innerHTML || "Unknown|index";
+				 linkDef = linkDef.split("|");//[Title,page]
+				 var subHtml=['<li><a href="',def[1], linkDef[1], '.html">', linkDef[0],'</a></li>'];
+				 html.push(subHtml.join("")); //commonpath/folder/index.html">Title
+			});
+			el.innerHTML=html.join("");
+		}
+
+		var aa = document.getElementsByClassName("jt-links");
+		forEach(aa, processSPLinks);
+	</script>
+</html>
