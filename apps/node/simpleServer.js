@@ -19,11 +19,13 @@ const handleGet = (request, response) => {
 
 	fs.exists(filename, function (exists) {
 		if (!exists) {
+			response.statusCode = 404;
 			return writeError(response, 404, [
 				'404 Not Found\n',
 				`filename: ${filename}\nuri: ${uri}\n`,
-				`status: ${response.statusCode} ${response.statusMessage}\n`,
-				`method: ${request.method}\n`
+				`Request\n`,
+				` method : ${request.method}\n`,
+				` headers: ${JSON.stringify(request.headers, null, 2)}\n`
 			]);
 		}
 

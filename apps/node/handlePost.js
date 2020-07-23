@@ -1,5 +1,5 @@
 const writeError = (response, status, lines) => {
-	response.writeHead(status, { 'Content-Type': 'text/plain' });
+	response.writeHead(response.statusCode, { 'Content-Type': 'text/plain' });
 	lines.forEach(line => {
 		response.write(line);
 	})
